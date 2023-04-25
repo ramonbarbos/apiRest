@@ -42,6 +42,7 @@ class RequestValidator
             $this->dadosRequest = JsonUtil::tratarCorpoRequisicaoJson();
         }
 
+        //Responsavel pelo TOKEK
         //$this->TokensAutorizadosRepository->validarToken(getallheaders()['Authorization']);
         $metodo = $this->request['metodo'];
         return $this->$metodo(); //Direcionando para o GET 
