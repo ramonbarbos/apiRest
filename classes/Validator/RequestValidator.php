@@ -21,11 +21,15 @@ class RequestValidator
 
     public function __construct($request = [])
     {
+       //Primeira coisa que ira fazer, vai ser o roteamento
        $this->request = $request;
        $this->TokensAutorizadosRepository  = new TokensAutorizadosRepository();
     }
 
     public function processarRequest(){
+
+        //Aqui iremos direcionar as requisições. caso for GET,PUT,DELETE,POST
+
         $retorno = utf8_encode(ConstantesGenericasUtil::MSG_ERRO_TIPO_ROTA);
 
         if( in_array($this->request['metodo'],ConstantesGenericasUtil::TIPO_REQUEST,true)){
@@ -38,14 +42,16 @@ class RequestValidator
     
     private function direcionarRequest()
     {
+        //Validando o metodo requisitado
+        //Caso não seja GET e DELETE, quer dizer que tem um BODY ou seja um POST OU PUT
         if ($this->request['metodo'] !== self::GET && $this->request['metodo'] !== self::DELETE) {
             $this->dadosRequest = JsonUtil::tratarCorpoRequisicaoJson();
         }
 
-        //Responsavel pelo TOKEK
+        //Responsavel pelo TOKEN
         //$this->TokensAutorizadosRepository->validarToken(getallheaders()['Authorization']);
         $metodo = $this->request['metodo'];
-        return $this->$metodo(); //Direcionando para o GET 
+        return $this->$metodo(); //Direcionando 
     }
 
     private function get(){

@@ -15,6 +15,7 @@ class UsuarioService
     public const RECURSOS_DELETE = ['deletar'];
     public const RECURSOS_POST = ['cadastrar'];
     public const RECURSOS_PUT = ['atualizar'];
+    public const RECURSOS_TESTE = ['teste'];
 
     private array $dados;
 
@@ -32,9 +33,17 @@ class UsuarioService
         $retorno = null;
         $recurso = $this->dados['recurso'];
         if (in_array($recurso, self::RECURSOS_GET, true)) {
+
             $retorno = $this->dados['id'] > 0 ? $this->getOneByKey() : $this->$recurso();
-        } else {
+
+        } else if(in_array($recurso, self::RECURSOS_TESTE, true)) {
+            
+            $retorno = $this->dados['id'] > 0 ? $this->getOneByKey() : $this->$recurso();
+
+        }else{
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
+
+
         }
 
         if ($retorno === null) {
@@ -44,6 +53,7 @@ class UsuarioService
         return $retorno;
     }
 
+   
     public function validarDelete(){
         $retorno = null;
         $recurso = $this->dados['recurso'];
@@ -106,6 +116,10 @@ class UsuarioService
     }
 
     private function listar(){
+        return $this->UsuariosRepository->getMySQL()->getAll(self::TABELA);
+    }
+
+    private function teste(){
         return $this->UsuariosRepository->getMySQL()->getAll(self::TABELA);
     }
 
