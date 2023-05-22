@@ -28,6 +28,8 @@ abstract class ConstantesGenericasUtil
     /* RECURSO USUARIOS */
     public const MSG_ERRO_ID_OBRIGATORIO = 'ID e obrigatorio!';
     public const MSG_ERRO_LOGIN_EXISTENTE = 'Login ja existente!';
+    public const MSG_ERRO_LOGIN_INVALIDO = 'Esse Login nao existe';
+    
     public const MSG_ERRO_LOGIN_SENHA_OBRIGATORIO = 'Login e Senha sao obrigatorios!';
 
     /* RETORNO JSON */

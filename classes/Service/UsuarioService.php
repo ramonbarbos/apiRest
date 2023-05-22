@@ -15,7 +15,7 @@ class UsuarioService
     public const RECURSOS_DELETE = ['deletar'];
     public const RECURSOS_POST = ['cadastrar'];
     public const RECURSOS_PUT = ['atualizar'];
-    public const RECURSOS_TESTE = ['teste'];
+    public const RECURSOS_LOGIN = ['login'];
 
     private array $dados;
 
@@ -36,11 +36,7 @@ class UsuarioService
 
             $retorno = $this->dados['id'] > 0 ? $this->getOneByKey() : $this->$recurso();
 
-        } else if(in_array($recurso, self::RECURSOS_TESTE, true)) {
-            
-            $retorno = $this->dados['id'] > 0 ? $this->getOneByKey() : $this->$recurso();
-
-        }else{
+        } else{
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
 
 
@@ -75,10 +71,12 @@ class UsuarioService
     public function validarPost(){
         $retorno = null;
         $recurso = $this->dados['recurso'];
-        if (in_array($recurso, self::RECURSOS_POST, true)) {
 
-          $retorno = $this->$recurso();
+        if (in_array($recurso, self::RECURSOS_LOGIN, true) ) {
+            $retorno = $this->validarLogin();
 
+        } elseif (in_array($recurso, self::RECURSOS_POST, true)) {
+            $retorno = $this->$recurso();
         } else {
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_ID_OBRIGATORIO);
         }
@@ -119,10 +117,7 @@ class UsuarioService
         return $this->UsuariosRepository->getMySQL()->getAll(self::TABELA);
     }
 
-    private function teste(){
-        return $this->UsuariosRepository->getMySQL()->getAll(self::TABELA);
-    }
-
+    
     private function getOneByKey()
     {
         return $this->UsuariosRepository->getMySQL()->getOneByKey(self::TABELA, $this->dados['id']);
@@ -160,5 +155,23 @@ class UsuarioService
         throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NAO_AFETADO);
     }
 
+    public function validarLogin()
+{
+    $login = $this->dadosCorpoRequest['login'];
+    $senha = $this->dadosCorpoRequest['senha'];
+
+    if ($login && $senha) {
+        $usuario = $this->UsuariosRepository->loginUser($login, $senha);
+
+        if ($usuario) {
+            // Login válido, prosseguir com o restante do código ou retornar uma resposta adequada
+            return ['mensagem' => 'Login válido'];
+        } else {
+            throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_LOGIN_INVALIDO);
+        }
+    } else {
+        throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_LOGIN_SENHA_OBRIGATORIO);
+    }
+}
 
 }

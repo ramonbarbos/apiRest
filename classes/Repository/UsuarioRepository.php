@@ -37,7 +37,16 @@ class UsuarioRepository
         $stmt->execute();
         return $stmt->rowCount();
     }
-    
+
+    public function loginUser($login, $senha){
+        $consulta = 'SELECT * FROM ' . self::TABELA . ' WHERE login = :login AND senha = :senha';
+        $stmt = $this->MySQL->getDb()->prepare($consulta);
+        $stmt->bindParam(':login', $login);
+        $stmt->bindParam(':senha', $senha);
+        $stmt->execute();
+        return $stmt->fetch();
+
+    }
     public function getMySQL()
     {
         return $this->MySQL;
