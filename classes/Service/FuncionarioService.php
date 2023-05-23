@@ -3,30 +3,26 @@
 namespace Service;
 
 use InvalidArgumentException;
-use Repository\UsuarioRepository;
+use Repository\FuncionarioRepository;
 use Util\ConstantesGenericasUtil;
 
-class UsuarioService
+class FuncionarioService
 {
-
-
-    public const TABELA = 'usuarios';
+    public const TABELA = 'funcionario';
     public const RECURSOS_GET = ['listar'];
     public const RECURSOS_DELETE = ['deletar'];
     public const RECURSOS_POST = ['cadastrar'];
     public const RECURSOS_PUT = ['atualizar'];
-    public const RECURSOS_LOGIN = ['login'];
-
     private array $dados;
 
     private array $dadosCorpoRequest;
 
-    private object $UsuariosRepository;
+    private object $FuncionarioRepository;
 
     public function __construct($dados = [])
     {
         $this->dados = $dados;
-        $this->UsuariosRepository = new UsuarioRepository();
+        $this->FuncionarioRepository = new FuncionarioRepository();
     }
 
     public function validarGet(){
@@ -49,7 +45,6 @@ class UsuarioService
         return $retorno;
     }
 
-   
     public function validarDelete(){
         $retorno = null;
         $recurso = $this->dados['recurso'];
@@ -72,10 +67,7 @@ class UsuarioService
         $retorno = null;
         $recurso = $this->dados['recurso'];
 
-        if (in_array($recurso, self::RECURSOS_LOGIN, true) ) {
-            $retorno = $this->validarLogin();
-
-        } elseif (in_array($recurso, self::RECURSOS_POST, true)) {
+        if (in_array($recurso, self::RECURSOS_POST, true)) {
             $retorno = $this->$recurso();
         } else {
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_ID_OBRIGATORIO);
@@ -114,32 +106,33 @@ class UsuarioService
     }
 
     private function listar(){
-        return $this->UsuariosRepository->getMySQL()->getAll(self::TABELA);
+        return $this->FuncionarioRepository->getMySQL()->getAll(self::TABELA);
     }
 
     
     private function getOneByKey()
     {
-        return $this->UsuariosRepository->getMySQL()->getOneByKey(self::TABELA, $this->dados['id']);
+        return $this->FuncionarioRepository->getMySQL()->getOneByKey(self::TABELA, $this->dados['id']);
     }
 
     private function deletar(){
-        return $this->UsuariosRepository->getMySQL()->delete(self::TABELA, $this->dados['id']);
+        return $this->FuncionarioRepository->getMySQL()->delete(self::TABELA, $this->dados['id']);
     }
 
     private function cadastrar(){
+        $nm_funcionario = $this->dadosCorpoRequest['nm_funcionario'];
+        $nm_cargo = $this->dadosCorpoRequest['nm_cargo'];
         $login = $this->dadosCorpoRequest['login'];
-        $senha = $this->dadosCorpoRequest['senha'];
-        if($login && $senha){
+        if($nm_funcionario && $nm_cargo && $login ){
 
-            if($this->UsuariosRepository->insertUser($login,$senha) > 0){
+            if($this->FuncionarioRepository->insertUser($nm_funcionario,$nm_cargo, $login) > 0){
 
-                $idIserido = $this->UsuariosRepository->getMySQL()->getDb()->lastInsertId();
-                $this->UsuariosRepository->getMySQL()->getDb()->commit();
+                $idIserido = $this->FuncionarioRepository->getMySQL()->getDb()->lastInsertId();
+                $this->FuncionarioRepository->getMySQL()->getDb()->commit();
                 return ['id_inserido' => $idIserido];
 
             }
-            $this->UsuariosRepository->getMySQL()->getDb()->rollback();
+            $this->FuncionarioRepository->getMySQL()->getDb()->rollback();
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_GENERICO);
         }
         throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_LOGIN_SENHA_OBRIGATORIO);
@@ -147,31 +140,11 @@ class UsuarioService
 
     private function atualizar()
     {
-        if ($this->UsuariosRepository->updateUser($this->dados['id'], $this->dadosCorpoRequest) > 0) {
-            $this->UsuariosRepository->getMySQL()->getDb()->commit();
+        if ($this->FuncionarioRepository->updateUser($this->dados['id'], $this->dadosCorpoRequest) > 0) {
+            $this->FuncionarioRepository->getMySQL()->getDb()->commit();
             return ConstantesGenericasUtil::MSG_ATUALIZADO_SUCESSO;
         }
-        $this->UsuariosRepository->getMySQL()->getDb()->rollBack();
+        $this->FuncionarioRepository->getMySQL()->getDb()->rollBack();
         throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NAO_AFETADO);
     }
-
-    public function validarLogin()
-     {
-            $login = $this->dadosCorpoRequest['login'];
-            $senha = $this->dadosCorpoRequest['senha'];
-
-            if ($login && $senha) {
-                $usuario = $this->UsuariosRepository->loginUser($login, $senha);
-
-                if ($usuario) {
-                    // Login válido, prosseguir com o restante do código ou retornar uma resposta adequada
-                    return ['mensagem' => 'Login válido'];
-                } else {
-                    throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_LOGIN_INVALIDO);
-                }
-            } else {
-                throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_LOGIN_SENHA_OBRIGATORIO);
-            }
-        }
-
 }
