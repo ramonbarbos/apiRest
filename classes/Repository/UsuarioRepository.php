@@ -44,6 +44,7 @@ class UsuarioRepository
         $stmt->bindParam(':login', $login);
         $stmt->bindParam(':senha', $senha);
         $stmt->execute();
+        
         return $stmt->fetch();
 
     }

@@ -165,7 +165,8 @@ class UsuarioService
 
                 if ($usuario) {
                     // Login válido, prosseguir com o restante do código ou retornar uma resposta adequada
-                    return ['mensagem' => 'Login válido'];
+                    $idIserido = $this->UsuariosRepository->getMySQL()->getDb()->lastInsertId();
+                    return ['mensagem' => 'Login válido','logado' => $usuario['id']];
                 } else {
                     throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_LOGIN_INVALIDO);
                 }
