@@ -126,12 +126,10 @@ class AgendaService
     private function cadastrar(){
         $id_funcionario = $this->dadosCorpoRequest['id_funcionario'];
         $id_usuario = $this->dadosCorpoRequest['id_usuario'];
-        $data_hora = $this->dadosCorpoRequest['data_hora'];
-        $id_servico = $this->dadosCorpoRequest['id_servico'];
         if($id_funcionario && $id_usuario){
 
-            if($this->AgendaRepository->insertUser($id_funcionario,$id_usuario,$data_hora,$id_servico) > 0){
-
+            if( $this->AgendaRepository->insertUser( $this->dadosCorpoRequest) > 0){
+               
                 $idIserido = $this->AgendaRepository->getMySQL()->getDb()->lastInsertId();
                 $this->AgendaRepository->getMySQL()->getDb()->commit();
                 return ['id_inserido' => $idIserido];
