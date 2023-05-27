@@ -132,7 +132,7 @@ class UsuarioService
         $senha = $this->dadosCorpoRequest['senha'];
         if($login && $senha){
 
-            if($this->UsuariosRepository->insertUser($login,$senha) > 0){
+            if($this->UsuariosRepository->insertUser( $this->dadosCorpoRequest) > 0){
 
                 $idIserido = $this->UsuariosRepository->getMySQL()->getDb()->lastInsertId();
                 $this->UsuariosRepository->getMySQL()->getDb()->commit();

@@ -106,7 +106,9 @@ class FuncionarioService
     }
 
     private function listar(){
-        return $this->FuncionarioRepository->getMySQL()->getAll(self::TABELA);
+        //return $this->FuncionarioRepository->getMySQL()->getAll(self::TABELA);
+        return $this->FuncionarioRepository->getMySQL()->getFunc(self::TABELA);
+
     }
 
     
@@ -121,11 +123,9 @@ class FuncionarioService
 
     private function cadastrar(){
         $nm_funcionario = $this->dadosCorpoRequest['nm_funcionario'];
-        $nm_cargo = $this->dadosCorpoRequest['nm_cargo'];
-        $login = $this->dadosCorpoRequest['login'];
-        if($nm_funcionario && $nm_cargo && $login ){
+        if($nm_funcionario ){
 
-            if($this->FuncionarioRepository->insertUser($nm_funcionario,$nm_cargo, $login) > 0){
+            if($this->FuncionarioRepository->insertUser( $this->dadosCorpoRequest) > 0){
 
                 $idIserido = $this->FuncionarioRepository->getMySQL()->getDb()->lastInsertId();
                 $this->FuncionarioRepository->getMySQL()->getDb()->commit();

@@ -5,6 +5,7 @@ namespace Validator;
 use InvalidArgumentException;
 use Repository\TokensAutorizadosRepository;
 use Service\AgendaService;
+use Service\CidadeService;
 use Service\UsuarioService;
 use Service\FuncionarioService;
 use Service\ServicoService;
@@ -24,6 +25,7 @@ class RequestValidator
     const FUNCIONARIO = 'FUNCIONARIO';
     const SERVICO = 'SERVICO';
     const AGENDA = 'AGENDA';
+    const CIDADE = 'CIDADE';
 
     public function __construct($request = [])
     {
@@ -79,6 +81,10 @@ class RequestValidator
                 case self::AGENDA:
                     $AgendaService = new AgendaService($this->request);
                     $retorno = $AgendaService->validarGet();
+                    break;    
+                case self::CIDADE:
+                    $CidadeService = new CidadeService($this->request);
+                    $retorno = $CidadeService->validarGet();
                     break;                   
                 default:
                     throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
@@ -108,6 +114,10 @@ class RequestValidator
                     $AgendaService = new AgendaService($this->request);
                     $retorno = $AgendaService->validarDelete();
                     break;
+                case self::CIDADE:
+                    $CidadeService = new CidadeService($this->request);
+                    $retorno = $CidadeService->validarDelete();
+                    break;  
                  default:
                      throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
              }
@@ -138,7 +148,12 @@ class RequestValidator
                     $AgendaService = new AgendaService($this->request);
                     $AgendaService->setDadosCorpoRequest($this->dadosRequest);
                     $retorno = $AgendaService->validarPost();
-                    break;            
+                    break;    
+                case self::CIDADE:
+                    $CidadeService = new CidadeService($this->request);
+                    $CidadeService->setDadosCorpoRequest($this->dadosRequest);
+                    $retorno = $CidadeService->validarPost();
+                    break;          
                  default:
                      throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
              }
@@ -169,6 +184,10 @@ class RequestValidator
                     $AgendaService = new AgendaService($this->request);
                     $AgendaService->setDadosCorpoRequest($this->dadosRequest);
                     $retorno = $AgendaService->validarPut();
+                case self::CIDADE:
+                    $CidadeService = new CidadeService($this->request);
+                    $CidadeService->setDadosCorpoRequest($this->dadosRequest);
+                    $retorno = $CidadeService->validarPut();
                     break;   
                  default:
                      throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);

@@ -65,6 +65,18 @@ class MySQL
         throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_SEM_RETORNO);
     }
 
+    public function getFunc($tabela)
+    {
+        if ($tabela) {
+            $consulta = 'SELECT * FROM ' . $tabela . ' WHERE ativo = "s"';
+            $stmt = $this->db->query($consulta);
+            $registros = $stmt->fetchAll($this->db::FETCH_ASSOC);
+            if (is_array($registros) && count($registros) > 0) {
+                return $registros;
+            }
+        }
+        throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_SEM_RETORNO);
+    }
 
     public function getOneByKey($tabela, $id)
     {

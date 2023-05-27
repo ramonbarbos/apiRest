@@ -14,13 +14,17 @@ class FuncionarioRepository
         $this->MySQL = new MySQL();
     }
 
-    public function insertUser($nm_funcionario, $nm_cargo, $login){
-        $consultaInsert = 'INSERT INTO ' . self::TABELA . ' (nm_funcionario, nm_cargo, login) VALUES (:nm_funcionario, :nm_cargo, :login)';
+    public function insertUser($dados){
+        $consultaInsert = 'INSERT INTO ' . self::TABELA . ' (usuario_id,nm_funcionario, nm_cargo,endereco,bairro,cidade,contato) VALUES (:usuario_id,:nm_funcionario, :nm_cargo, :endereco,:bairro,:cidade,:contato)';
         $this->MySQL->getDb()->beginTransaction();
         $stmt = $this->MySQL->getDb()->prepare($consultaInsert);
-        $stmt->bindParam(':nm_funcionario', $nm_funcionario);
-        $stmt->bindParam(':nm_cargo', $nm_cargo);
-        $stmt->bindParam(':login', $login);
+        $stmt->bindParam(':usuario_id', $dados['usuario_id']);
+        $stmt->bindParam(':nm_funcionario', $dados['nm_funcionario']);
+        $stmt->bindParam(':nm_cargo', $dados['nm_cargo']);
+        $stmt->bindParam(':endereco', $dados['endereco']);
+        $stmt->bindParam(':bairro', $dados['bairro']);
+        $stmt->bindParam(':cidade', $dados['cidade']);
+        $stmt->bindParam(':contato', $dados['contato']);
         $stmt->execute();
         return $stmt->rowCount();
     }

@@ -3,14 +3,14 @@
 namespace Service;
 
 use InvalidArgumentException;
-use Repository\AgendaRepository;
+use Repository\CidadeRepository;
 use Util\ConstantesGenericasUtil;
 
-class AgendaService
+class CidadeService
 {
 
 
-    public const TABELA = 'agenda';
+    public const TABELA = 'cidade';
     public const RECURSOS_GET = ['listar'];
     public const RECURSOS_DELETE = ['deletar'];
     public const RECURSOS_POST = ['cadastrar'];
@@ -20,12 +20,12 @@ class AgendaService
 
     private array $dadosCorpoRequest;
 
-    private object $AgendaRepository;
+    private object $CidadeRepository;
 
     public function __construct($dados = [])
     {
         $this->dados = $dados;
-        $this->AgendaRepository = new AgendaRepository();
+        $this->CidadeRepository = new CidadeRepository();
     }
 
     public function validarGet(){
@@ -110,31 +110,31 @@ class AgendaService
     }
 
     private function listar(){
-        return $this->AgendaRepository->getMySQL()->getAll(self::TABELA);
+        return $this->CidadeRepository->getMySQL()->getAll(self::TABELA);
     }
 
     
     private function getOneByKey()
     {
-        return $this->AgendaRepository->getMySQL()->getOneByKey(self::TABELA, $this->dados['id']);
+        return $this->CidadeRepository->getMySQL()->getOneByKey(self::TABELA, $this->dados['id']);
     }
 
     private function deletar(){
-        return $this->AgendaRepository->getMySQL()->delete(self::TABELA, $this->dados['id']);
+        return $this->CidadeRepository->getMySQL()->delete(self::TABELA, $this->dados['id']);
     }
 
     private function cadastrar(){
-        $id_funcionario = $this->dadosCorpoRequest['id_funcionario'];
-        if($id_funcionario){
+        $nm_cidade = $this->dadosCorpoRequest['nm_cidade'];
+        if($nm_cidade ){
 
-            if( $this->AgendaRepository->insertUser( $this->dadosCorpoRequest) > 0){
+            if( $this->CidadeRepository->insertUser( $this->dadosCorpoRequest) > 0){
                
-                $idIserido = $this->AgendaRepository->getMySQL()->getDb()->lastInsertId();
-                $this->AgendaRepository->getMySQL()->getDb()->commit();
+                $idIserido = $this->CidadeRepository->getMySQL()->getDb()->lastInsertId();
+                $this->CidadeRepository->getMySQL()->getDb()->commit();
                 return ['id_inserido' => $idIserido];
 
             }
-            $this->AgendaRepository->getMySQL()->getDb()->rollback();
+            $this->CidadeRepository->getMySQL()->getDb()->rollback();
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_GENERICO);
         }
         throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_LOGIN_SENHA_OBRIGATORIO);
@@ -142,11 +142,11 @@ class AgendaService
 
     private function atualizar()
     {
-        if ($this->AgendaRepository->updateUser($this->dados['id'], $this->dadosCorpoRequest) > 0) {
-            $this->AgendaRepository->getMySQL()->getDb()->commit();
+        if ($this->CidadeRepository->updateUser($this->dados['id'], $this->dadosCorpoRequest) > 0) {
+            $this->CidadeRepository->getMySQL()->getDb()->commit();
             return ConstantesGenericasUtil::MSG_ATUALIZADO_SUCESSO;
         }
-        $this->AgendaRepository->getMySQL()->getDb()->rollBack();
+        $this->CidadeRepository->getMySQL()->getDb()->rollBack();
         throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NAO_AFETADO);
     }
 
