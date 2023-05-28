@@ -78,6 +78,7 @@ class MySQL
         throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_SEM_RETORNO);
     }
 
+
     public function getOneByKey($tabela, $id)
     {
         if ($tabela && $id) {
@@ -88,6 +89,23 @@ class MySQL
             $totalRegistros = $stmt->rowCount();
             if ($totalRegistros === 1) {
                 return $stmt->fetch($this->db::FETCH_ASSOC);
+            }
+            throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_SEM_RETORNO);
+        }
+
+        throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_ID_OBRIGATORIO);
+    }
+
+    public function getAgenda($tabela, $id)
+    {
+        if ($tabela ) {
+            $consulta = 'SELECT * FROM ' . $tabela . ' WHERE id_usuario = :id';
+            $stmt = $this->db->prepare($consulta);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+            $totalRegistros = $stmt->rowCount();
+            if ($totalRegistros  > 0) {
+                return $stmt->fetchAll($this->db::FETCH_ASSOC);
             }
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_SEM_RETORNO);
         }

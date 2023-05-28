@@ -116,7 +116,9 @@ class AgendaService
     
     private function getOneByKey()
     {
-        return $this->AgendaRepository->getMySQL()->getOneByKey(self::TABELA, $this->dados['id']);
+        //return $this->AgendaRepository->getMySQL()->getOneByKey(self::TABELA, $this->dados['id']);
+       // return $this->AgendaRepository->getMySQL()->getAgenda(self::TABELA, $this->dados['id_usuario']);
+       return  $this->AgendaRepository->getMySQL()->getAgenda(self::TABELA, $this->dados['id']);
     }
 
     private function deletar(){

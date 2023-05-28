@@ -18,15 +18,15 @@ class UsuarioRepository
     }
 
     public function insertUser($dados){
-        $consultaInsert = 'INSERT INTO ' . self::TABELA . ' (login, senha, nome,foto ,cidade,funcionario_id) VALUES (:login, :senha, :nome,:foto, :cidade,:funcionario_id)';
+        $consultaInsert = 'INSERT INTO ' . self::TABELA . ' (login, senha, nome ,cidade) VALUES (:login, :senha, :nome, :cidade)';
         $this->MySQL->getDb()->beginTransaction();
         $stmt = $this->MySQL->getDb()->prepare($consultaInsert);
         $stmt->bindParam(':login', $dados['login']);
         $stmt->bindParam(':senha', $dados['senha']);
         $stmt->bindParam(':nome', $dados['nome']);
-        $stmt->bindParam(':foto', $dados['foto']);
+       // $stmt->bindParam(':foto', $dados['foto']);
         $stmt->bindParam(':cidade', $dados['cidade']);
-        $stmt->bindParam(':funcionario_id', $dados['funcionario_id']);
+        //$stmt->bindParam(':funcionario_id', $dados['funcionario_id']);
         $stmt->execute();
         return $stmt->rowCount();
     }
