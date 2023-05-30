@@ -110,6 +110,8 @@ class AgendaService
     }
 
     private function listar(){
+
+        
         return $this->AgendaRepository->getMySQL()->getAll(self::TABELA);
     }
 
