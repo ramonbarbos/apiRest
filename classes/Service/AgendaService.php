@@ -8,18 +8,14 @@ use Util\ConstantesGenericasUtil;
 
 class AgendaService
 {
-
-
     public const TABELA = 'agenda';
-    public const RECURSOS_GET = ['listar'];
+    public const RECURSOS_GET = ['listar', 'exibelista','exiberecente'];
     public const RECURSOS_DELETE = ['deletar'];
     public const RECURSOS_POST = ['cadastrar'];
     public const RECURSOS_PUT = ['atualizar'];
 
     private array $dados;
-
     private array $dadosCorpoRequest;
-
     private object $AgendaRepository;
 
     public function __construct($dados = [])
@@ -28,17 +24,22 @@ class AgendaService
         $this->AgendaRepository = new AgendaRepository();
     }
 
-    public function validarGet(){
+    public function validarGet()
+    {
         $retorno = null;
         $recurso = $this->dados['recurso'];
+
         if (in_array($recurso, self::RECURSOS_GET, true)) {
+            if ($recurso === 'exibelista') {
+                $retorno = $this->exibeLista();
+            }else if($recurso === 'exiberecente'){
+                $retorno = $this->recentes();
 
-            $retorno = $this->dados['id'] > 0 ? $this->getOneByKey() : $this->$recurso();
-
-        } else{
+            } else  {
+                $retorno = $this->dados['id'] > 0 ? $this->getOneByKey() : $this->$recurso();
+            }
+        } else {
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
-
-
         }
 
         if ($retorno === null) {
@@ -48,12 +49,13 @@ class AgendaService
         return $retorno;
     }
 
-   
-    public function validarDelete(){
+    public function validarDelete()
+    {
         $retorno = null;
         $recurso = $this->dados['recurso'];
+
         if (in_array($recurso, self::RECURSOS_DELETE, true)) {
-            if($this->dados['id'] > 0){
+            if ($this->dados['id'] > 0) {
                 $retorno = $this->$recurso();
             }
         } else {
@@ -67,7 +69,8 @@ class AgendaService
         return $retorno;
     }
 
-    public function validarPost(){
+    public function validarPost()
+    {
         $retorno = null;
         $recurso = $this->dados['recurso'];
 
@@ -88,6 +91,7 @@ class AgendaService
     {
         $retorno = null;
         $recurso = $this->dados['recurso'];
+
         if (in_array($recurso, self::RECURSOS_PUT, true)) {
             if ($this->dados['id'] > 0) {
                 $retorno = $this->$recurso();
@@ -105,42 +109,52 @@ class AgendaService
         return $retorno;
     }
 
-    public function setDadosCorpoRequest($dadosCorpoRequest){
+    public function setDadosCorpoRequest($dadosCorpoRequest)
+    {
         $this->dadosCorpoRequest = $dadosCorpoRequest;
     }
 
-    private function listar(){
-
-        
+    private function listar()
+    {
         return $this->AgendaRepository->getMySQL()->getAll(self::TABELA);
     }
 
-    
     private function getOneByKey()
     {
-        //return $this->AgendaRepository->getMySQL()->getOneByKey(self::TABELA, $this->dados['id']);
-       // return $this->AgendaRepository->getMySQL()->getAgenda(self::TABELA, $this->dados['id_usuario']);
-       return  $this->AgendaRepository->getMySQL()->getAgenda(self::TABELA, $this->dados['id']);
+        return $this->AgendaRepository->getMySQL()->getOneByKey(self::TABELA, $this->dados['id']);
     }
 
-    private function deletar(){
+    private function exibeLista()
+    {
+        return $this->AgendaRepository->getMySQL()->getAgenda(self::TABELA, $this->dados['id']);
+    }
+
+    private function recentes()
+    {
+        $idUsuario = $this->dados['id'];
+        return $this->AgendaRepository->getRecentesPorUsuario($idUsuario);
+    }
+
+    private function deletar()
+    {
         return $this->AgendaRepository->getMySQL()->delete(self::TABELA, $this->dados['id']);
     }
 
-    private function cadastrar(){
+    private function cadastrar()
+    {
         $id_funcionario = $this->dadosCorpoRequest['id_funcionario'];
-        if($id_funcionario){
 
-            if( $this->AgendaRepository->insertUser( $this->dadosCorpoRequest) > 0){
-               
-                $idIserido = $this->AgendaRepository->getMySQL()->getDb()->lastInsertId();
+        if ($id_funcionario) {
+            if ($this->AgendaRepository->insertUser($this->dadosCorpoRequest) > 0) {
+                $idInserido = $this->AgendaRepository->getMySQL()->getDb()->lastInsertId();
                 $this->AgendaRepository->getMySQL()->getDb()->commit();
-                return ['id_inserido' => $idIserido];
-
+                return ['id_inserido' => $idInserido];
             }
+
             $this->AgendaRepository->getMySQL()->getDb()->rollback();
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_GENERICO);
         }
+
         throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_LOGIN_SENHA_OBRIGATORIO);
     }
 
@@ -150,10 +164,8 @@ class AgendaService
             $this->AgendaRepository->getMySQL()->getDb()->commit();
             return ConstantesGenericasUtil::MSG_ATUALIZADO_SUCESSO;
         }
+
         $this->AgendaRepository->getMySQL()->getDb()->rollBack();
         throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_NAO_AFETADO);
     }
-
-    
-
 }

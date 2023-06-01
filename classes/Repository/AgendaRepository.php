@@ -4,6 +4,7 @@ namespace Repository;
 
 use DB\MySQL;
 use Exception;
+use PDO;
 
 class AgendaRepository
 {
@@ -64,7 +65,19 @@ class AgendaRepository
         return $stmt->rowCount();
     }
 
-    
+    public function getRecentesPorUsuario($idUsuario)
+    {
+        $consulta = 'SELECT * FROM ' . self::TABELA . ' WHERE id_usuario = :id_usuario ORDER BY data_hora DESC LIMIT 1';
+        $stmt = $this->MySQL->getDb()->prepare($consulta);
+        $stmt->bindValue(':id_usuario', $idUsuario);
+        $stmt->execute();
+        $agendamento = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $agendamento;
+    }
+
+     
+
+  
     public function getMySQL()
     {
         return $this->MySQL;

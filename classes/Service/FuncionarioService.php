@@ -112,6 +112,7 @@ class FuncionarioService
     }
 
     
+   
     private function getOneByKey()
     {
         return $this->FuncionarioRepository->getMySQL()->getOneByKey(self::TABELA, $this->dados['id']);

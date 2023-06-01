@@ -78,6 +78,7 @@ class MySQL
         throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_SEM_RETORNO);
     }
 
+ 
 
     public function getOneByKey($tabela, $id)
     {
@@ -95,7 +96,9 @@ class MySQL
 
         throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_ID_OBRIGATORIO);
     }
-    
+
+   
+
     public function getAgenda($tabela, $id)
     {
         if (empty($tabela)) {
