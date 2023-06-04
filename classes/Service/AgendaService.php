@@ -9,7 +9,7 @@ use Util\ConstantesGenericasUtil;
 class AgendaService
 {
     public const TABELA = 'agenda';
-    public const RECURSOS_GET = ['listar', 'exibelista','exiberecente'];
+    public const RECURSOS_GET = ['listar', 'exibelista','exiberecente', 'proximos','historico'];
     public const RECURSOS_DELETE = ['deletar'];
     public const RECURSOS_POST = ['cadastrar'];
     public const RECURSOS_PUT = ['atualizar'];
@@ -33,9 +33,15 @@ class AgendaService
             if ($recurso === 'exibelista') {
                 $retorno = $this->exibeLista();
             }else if($recurso === 'exiberecente'){
+                $retorno = $this->recente();
+
+            } else if($recurso === 'proximos'){
                 $retorno = $this->recentes();
 
-            } else  {
+            } else if($recurso === 'historico'){
+                $retorno = $this->historico();
+
+            }else  {
                 $retorno = $this->dados['id'] > 0 ? $this->getOneByKey() : $this->$recurso();
             }
         } else {
@@ -126,13 +132,24 @@ class AgendaService
 
     private function exibeLista()
     {
-        return $this->AgendaRepository->getMySQL()->getAgenda(self::TABELA, $this->dados['id']);
+        return $this->AgendaRepository->getAgenda(self::TABELA, $this->dados['id']);
     }
 
     private function recentes()
     {
         $idUsuario = $this->dados['id'];
+        return $this->AgendaRepository->getProximosPorUsuario($idUsuario);
+    }
+
+    private function recente()
+    {
+        $idUsuario = $this->dados['id'];
         return $this->AgendaRepository->getRecentesPorUsuario($idUsuario);
+    }
+    private function historico()
+    {
+        $idUsuario = $this->dados['id'];
+        return $this->AgendaRepository->getHistoricoPorUsuario($idUsuario);
     }
 
     private function deletar()

@@ -9,7 +9,7 @@ use Util\ConstantesGenericasUtil;
 class FuncionarioService
 {
     public const TABELA = 'funcionario';
-    public const RECURSOS_GET = ['listar'];
+    public const RECURSOS_GET = ['listar', 'verificar'];
     public const RECURSOS_DELETE = ['deletar'];
     public const RECURSOS_POST = ['cadastrar'];
     public const RECURSOS_PUT = ['atualizar'];
@@ -30,7 +30,13 @@ class FuncionarioService
         $recurso = $this->dados['recurso'];
         if (in_array($recurso, self::RECURSOS_GET, true)) {
 
-            $retorno = $this->dados['id'] > 0 ? $this->getOneByKey() : $this->$recurso();
+            if ($recurso === 'verificar') {
+                $retorno = $this->verificar();
+            } else  {
+                $retorno = $this->dados['id'] > 0 ? $this->getOneByKey() : $this->$recurso();
+            }
+
+           
 
         } else{
             throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_RECURSO_INEXISTENTE);
@@ -110,7 +116,12 @@ class FuncionarioService
         return $this->FuncionarioRepository->getMySQL()->getFunc(self::TABELA);
 
     }
-
+ 
+    private function verificar()
+    {
+        $idUsuario = $this->dados['id'];
+        return $this->FuncionarioRepository->getVerificar($idUsuario);
+    }
     
    
     private function getOneByKey()

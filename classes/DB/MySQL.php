@@ -99,41 +99,6 @@ class MySQL
 
    
 
-    public function getAgenda($tabela, $id)
-    {
-        if (empty($tabela)) {
-            throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_ID_OBRIGATORIO);
-        }
-    
-        // Verifica se o ID fornecido corresponde a um funcionário
-        $consultaFuncionario = 'SELECT id FROM funcionario WHERE usuario_id = :id';
-        $stmtFuncionario = $this->db->prepare($consultaFuncionario);
-        $stmtFuncionario->bindParam(':id', $id);
-        $stmtFuncionario->execute();
-        $funcionario = $stmtFuncionario->fetch();
-        $totalFuncionarios = $stmtFuncionario->rowCount();
-    
-        if ($totalFuncionarios > 0) {
-            // O ID fornecido corresponde a um funcionário
-            $consulta = 'SELECT * FROM ' . $tabela . ' WHERE id_funcionario = :id';
-            $stmt = $this->db->prepare($consulta);
-            $stmt->bindParam(':id', $funcionario['id']);
-        } else {
-            // O ID fornecido não corresponde a um funcionário
-            $consulta = 'SELECT * FROM ' . $tabela . ' WHERE id_usuario = :id';
-            $stmt = $this->db->prepare($consulta);
-            $stmt->bindParam(':id', $id);
-        }
-    
-        $stmt->execute();
-        $totalRegistros = $stmt->rowCount();
-    
-        if ($totalRegistros > 0) {
-            return $stmt->fetchAll($this->db::FETCH_ASSOC); // Retorna a agenda do usuário
-        } else {
-            throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_SEM_RETORNO);
-        }
-    }
     
     
 

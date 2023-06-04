@@ -3,6 +3,7 @@
 namespace Repository;
 
 use DB\MySQL;
+use PDO;
 
 class FuncionarioRepository
 {
@@ -39,6 +40,16 @@ class FuncionarioRepository
         $stmt->bindValue(':login', $dados['login']);
         $stmt->execute();
         return $stmt->rowCount();
+    }
+
+    public function getVerificar($idUsuario)
+    {
+        $consulta = 'SELECT * FROM ' . self::TABELA . ' WHERE usuario_id = :id_usuario ';
+        $stmt = $this->MySQL->getDb()->prepare($consulta);
+        $stmt->bindValue(':id_usuario', $idUsuario);
+        $stmt->execute();
+        $funcionario = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $funcionario;
     }
 
     public function getMySQL()
