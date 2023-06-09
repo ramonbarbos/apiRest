@@ -77,20 +77,38 @@ class AgendaRepository
         return $agendamento;
     }
 
-   public function getProximosPorUsuario($idUsuario)
-{
-    $consulta = 'SELECT * FROM ' . self::TABELA . ' WHERE id_usuario = :id_usuario AND data_hora > NOW() ORDER BY data_hora DESC';
-    $stmt = $this->MySQL->getDb()->prepare($consulta);
-    $stmt->bindValue(':id_usuario', $idUsuario);
-    $stmt->execute();
-    $agendamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function getProximosPorUsuario($idUsuario)
+    {
+        // Verifica se o ID fornecido corresponde a um funcionário
+        $consultaFuncionario = 'SELECT id FROM funcionario WHERE usuario_id = :id_usuario';
+        $stmtFuncionario = $this->MySQL->getDb()->prepare($consultaFuncionario);
+        $stmtFuncionario->bindValue(':id_usuario', $idUsuario);
+        $stmtFuncionario->execute();
+        $funcionario = $stmtFuncionario->fetch();
+        $totalFuncionarios = $stmtFuncionario->rowCount();
     
-    if (empty($agendamentos)) {
-        return "Não há nenhum agendamento disponível.";
+        if ($totalFuncionarios > 0) {
+            // O ID fornecido corresponde a um funcionário
+            $consulta = 'SELECT * FROM ' . self::TABELA . ' WHERE id_funcionario = :id_funcionario AND data_hora > NOW() ORDER BY data_hora DESC';
+            $stmt = $this->MySQL->getDb()->prepare($consulta);
+            $stmt->bindValue(':id_funcionario', $funcionario['id']);
+        } else {
+            // O ID fornecido não corresponde a um funcionário
+            $consulta = 'SELECT * FROM ' . self::TABELA . ' WHERE id_usuario = :id_usuario AND data_hora > NOW() ORDER BY data_hora DESC';
+            $stmt = $this->MySQL->getDb()->prepare($consulta);
+            $stmt->bindValue(':id_usuario', $idUsuario);
+        }
+    
+        $stmt->execute();
+        $agendamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        if (empty($agendamentos)) {
+            return "Sem Resultado";
+        }
+    
+        return $agendamentos;
     }
     
-    return $agendamentos;
-}
 
 
 public function getAgenda($tabela, $id)
@@ -132,17 +150,34 @@ public function getAgenda($tabela, $id)
 
 public function getHistoricoPorUsuario($idUsuario)
 {
-    $consulta = 'SELECT * FROM ' . self::TABELA . ' WHERE id_usuario = :id_usuario AND data_hora < NOW() ORDER BY data_hora ASC';
-    $stmt = $this->MySQL->getDb()->prepare($consulta);
-    $stmt->bindValue(':id_usuario', $idUsuario);
-    $stmt->execute();
-    $agendamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    if (empty($agendamentos)) {
-        return "Não há nenhum agendamento disponível.";
-    }
-    
-    return $agendamentos;
+   // Verifica se o ID fornecido corresponde a um funcionário
+   $consultaFuncionario = 'SELECT id FROM funcionario WHERE usuario_id = :id_usuario';
+   $stmtFuncionario = $this->MySQL->getDb()->prepare($consultaFuncionario);
+   $stmtFuncionario->bindValue(':id_usuario', $idUsuario);
+   $stmtFuncionario->execute();
+   $funcionario = $stmtFuncionario->fetch();
+   $totalFuncionarios = $stmtFuncionario->rowCount();
+
+   if ($totalFuncionarios > 0) {
+       // O ID fornecido corresponde a um funcionário
+       $consulta = 'SELECT * FROM ' . self::TABELA . ' WHERE id_funcionario = :id_funcionario AND data_hora < NOW() ORDER BY data_hora ASC';
+       $stmt = $this->MySQL->getDb()->prepare($consulta);
+       $stmt->bindValue(':id_funcionario', $funcionario['id']);
+   } else {
+       // O ID fornecido não corresponde a um funcionário
+       $consulta = 'SELECT * FROM ' . self::TABELA . ' WHERE id_usuario = :id_usuario AND data_hora < NOW() ORDER BY data_hora ASC';
+       $stmt = $this->MySQL->getDb()->prepare($consulta);
+       $stmt->bindValue(':id_usuario', $idUsuario);
+   }
+
+   $stmt->execute();
+   $agendamentos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+   if (empty($agendamentos)) {
+       return "Sem Resultado";
+   }
+
+   return $agendamentos;
 }
 
   
