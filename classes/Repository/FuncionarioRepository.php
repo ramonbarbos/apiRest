@@ -3,7 +3,10 @@
 namespace Repository;
 
 use DB\MySQL;
+use Exception;
+use InvalidArgumentException;
 use PDO;
+use Util\ConstantesGenericasUtil;
 
 class FuncionarioRepository
 {
@@ -50,6 +53,19 @@ class FuncionarioRepository
         $stmt->execute();
         $funcionario = $stmt->fetch(PDO::FETCH_ASSOC);
         return $funcionario;
+    }
+
+    public function getFunc($tabela)
+    {
+        if ($tabela) {
+            $consulta = 'SELECT * FROM ' . $tabela . ' WHERE ativo = "s"';
+            $stmt = $this->MySQL->getDb()->query($consulta);
+            $registros = $stmt->fetchAll($this->MySQL->getDb()::FETCH_ASSOC);
+            if (is_array($registros) && count($registros) > 0) {
+                return $registros;
+            }
+        }
+        throw new InvalidArgumentException(ConstantesGenericasUtil::MSG_ERRO_SEM_RETORNO);
     }
 
     public function getMySQL()
