@@ -1,5 +1,5 @@
 # API REST AGENDAMENTO
-Api Rest desenvolvido em PHP utilizando autenticação por token. Essa API está sendo utilizada na Aplicativo Agendamento - hospedado no meu repositório.
+A API foi desenvolvida em PHP e utiliza autenticação por token para garantir a segurança das informações. Ela foi especificamente criada para suportar o funcionamento do aplicativo Agendamento, o qual está hospedado no meu repositório no GitHub. Ao utilizar a API, o aplicativo Agendamento pode se comunicar de forma segura e eficiente, obtendo os dados necessários para realizar os agendamentos.
 
 Para utilizar:
 
